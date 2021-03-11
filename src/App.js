@@ -1,23 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import EditorJs from "react-editor-js";
+import { EDITOR_JS_TOOLS } from "./constants";
+import logo from "./logo.svg";
+import Output from "editorjs-react-renderer";
+// import "./App.css";
 
 function App() {
+  const instanceRef = React.useRef(null);
+  const [data, setData] = React.useState({
+    time: 1556098174501,
+    blocks: [
+      {
+        type: "header",
+        data: {
+          text: "Editor.js",
+          level: 2,
+        },
+      },
+    ],
+  });
+
+  async function handleSave() {
+    const savedData = await instanceRef.current.save();
+    await setData(savedData);
+    // instanceRef.current.clear();
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <EditorJs
+        tools={EDITOR_JS_TOOLS}
+        instanceRef={(instance) => (instanceRef.current = instance)}
+      />
+      <Output data={data} />
+      <button onClick={handleSave}>Save</button>
     </div>
   );
 }
